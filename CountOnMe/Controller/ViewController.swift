@@ -15,10 +15,6 @@ class ViewController: UIViewController {
     private var calculation = Calculation()
     
     
-    func updateDisplay() {
-        textView.text = calculation.sendOperationToDisplay()
-    }
-    
     // View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         guard let numberText = sender.title(for: .normal) else {
@@ -26,77 +22,78 @@ class ViewController: UIViewController {
         }
         
         calculation.addNumber(numberTapped: numberText)
-        updateDisplay()
+        textView.text.append(numberText)
         
     }
     
     @IBAction func tappedAdditionButton(_ sender: UIButton) {
-        tappedCalculationButton(operand: "+", message: "Un operateur est déja mis !")
+        tappedCalculationButton(operand: "+", message: "Un operateur est déja mis !", title: "⛔️")
     }
     
     @IBAction func tappedSubstractionButton(_ sender: UIButton) {
-        tappedCalculationButton(operand: "-", message: "Un operateur est déja mis !")
+        tappedCalculationButton(operand: "-", message: "Un operateur est déja mis !", title: "⛔️")
     }
     
     @IBAction func tappedMultiplicationButton(_ sender: UIButton) {
-        tappedCalculationButton(operand: "x", message: "Un operateur est déja mis !")
+        tappedCalculationButton(operand: "x", message: "Un operateur est déja mis !", title: "⛔️")
     }
     
     @IBAction func tappedDivisionButton(_ sender: UIButton) {
-        tappedCalculationButton(operand: "÷", message: "Un operateur est déja mis !")
+        tappedCalculationButton(operand: "÷", message: "Un operateur est déja mis !", title: "⛔️")
     }
     
     @IBAction func tappedACButton(_ sender: UIButton) {
         calculation.reset()
-        calculation.resetDisplay()
-        updateDisplay()
+        textView.text = ""
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        
-        calculation.numbersAreSentToCalculation()
-        
-        guard calculation.expressionIsCorrect == true else {
-            alert(message: "Entrez une expression correcte !")
-            return
-        }
-        guard calculation.expressionHaveEnoughElement else {
-            alert(message: "Démarrez un nouveau calcul !")
-            return
-        }
-        
+
         displayCalculationResult()
-        updateDisplay()
+     
     }
     
     
     private func displayCalculationResult() {
-        calculation.calculate()
-        updateDisplay()
+        do {
+            let result = try calculation.calculate()
+            textView.text.append(" = \(result)")
+        } catch (let error as Calculation.CalculationError) {
+            switch error {
+                case .missingArgument:
+                alert(message: "Il n'y a pas assez d'éléments pour effectuer le calcul !", title: "⚠️")
+                case .operationIsIncorrect:
+                alert(message: "Entrez une expression correcte !", title: "⚠️")
+            }
+        } catch {
+            
+        }
+     
     }
+
     
-    
-    private func alert(message: String) {
-        let alertVC = UIAlertController(title: "Zéro!", message: message, preferredStyle: .alert)
+    private func alert(message: String, title: String) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         return self.present(alertVC, animated: true, completion: nil)
     }
     
     
     
-    private func tappedCalculationButton(operand: String, message: String) {
-        if calculation.canAddOperator == false {
-            alert(message: message)
+    private func tappedCalculationButton(operand: String, message: String, title: String) {
+        do {
+           try calculation.addOperator(operatorTapped: operand)
+            textView.text.append(operand)
+        } catch (let error as Calculation.OperatorError) {
+            switch error {
+                case .doubleOperator:
+                    alert(message: message, title: title)
+            }
+        } catch {
             
-        } else {
-            calculation.addOperator(operatorTapped: operand)
         }
-        
+
     }
-    
-    
-    
-    
-    
+
     
 }
