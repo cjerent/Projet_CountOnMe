@@ -21,7 +21,7 @@ class CalculationTestCase: XCTestCase {
     
     func testGivenCalculationIsNull_WhenAdding_ThenAdditionHasResult() {
         calculation.addNumber(numberTapped: "2")
-        calculation.addOperator(operatorTapped: "+")
+        try? calculation.addOperator(operatorTapped: "+")
         calculation.addNumber(numberTapped: "1")
         
         let result = try? calculation.calculate()
@@ -31,7 +31,7 @@ class CalculationTestCase: XCTestCase {
 
     func testGivenCalculationIsNull_WhenMultiply_ThenMultiplicationHasResult() {
         calculation.addNumber(numberTapped: "2")
-        calculation.addOperator(operatorTapped: "x")
+        try? calculation.addOperator(operatorTapped: "x")
         calculation.addNumber(numberTapped: "2")
 
         let result = try? calculation.calculate()
@@ -41,7 +41,7 @@ class CalculationTestCase: XCTestCase {
 
     func testGivenCalculationIsNull_WhenSubtract_ThenSubtractionHasResult() {
         calculation.addNumber(numberTapped: "20")
-        calculation.addOperator(operatorTapped: "-")
+        try? calculation.addOperator(operatorTapped: "-")
         calculation.addNumber(numberTapped: "2")
 
         let result = try? calculation.calculate()
@@ -52,7 +52,7 @@ class CalculationTestCase: XCTestCase {
 
     func testGivenCalculationIsNull_WhenDivide_ThenDivisionHasResult() {
         calculation.addNumber(numberTapped: "20")
-        calculation.addOperator(operatorTapped: "÷")
+        try? calculation.addOperator(operatorTapped: "÷")
         calculation.addNumber(numberTapped: "2")
 
         let result = try? calculation.calculate()
@@ -62,7 +62,7 @@ class CalculationTestCase: XCTestCase {
 
     func testGivenCalculationIsNull_WhenDivideByZero_ThenDivisionHasErrorResult() {
         calculation.addNumber(numberTapped: "20")
-        calculation.addOperator(operatorTapped: "÷")
+        try? calculation.addOperator(operatorTapped: "÷")
         calculation.addNumber(numberTapped: "0")
 
         let result = try? calculation.calculate()
