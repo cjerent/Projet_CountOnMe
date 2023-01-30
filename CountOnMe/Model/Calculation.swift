@@ -10,117 +10,153 @@ import Foundation
 
 class Calculation {
     
-    private var elements = [String]()
-    private var operands = [String]()
+    private var numbers = [String]()
+    private var operators = [String]()
     private var result: Double = 0.0
     private var currentNumberTapped : String = ""
-
     
+    
+    /// Error enum for Calculation
     enum CalculationError: Error {
         case operationIsIncorrect
-        case missingArgument
+        case missingNumber
     }
     
+    /// Error enum for Operators
     enum OperatorError: Error {
         case doubleOperator
+        case noOperatorAtFirst
     }
     
-    
+    // Calculation cannot be done with just one number
     private var expressionIsCorrect: Bool {
-        if elements.count > 0 && operands.count > 0 {
+        if numbers.count > 0 && operators.count > 0 {
             return true
         } else {
             return false
         }
-     
     }
     
+    // Calculation cannot be done with just one number and one operator
     private var expressionHaveEnoughElement: Bool {
-        if elements.count >= 2 && operands.count >= 1 {
+        if numbers.count >= 2 && operators.count >= 1 {
             return true
         } else {
             return false
         }
-       
     }
     
-//    : 1
-    private var canAddOperator: Bool {
-        if operands.count <= elements.count && currentNumberTapped != "" {
+    // Calculation cannot be done with two operators in a row
+    private var canAddOperator: Bool  {
+        if operators.count < numbers.count + ((currentNumberTapped == "") ? 0 : 1)  {
             return true
         }
         return false
     }
     
-//    private var expressionHaveNoNegativesNumber: Bool {
-//        if currentNumberTapped == "" {
-//            print("no operator allowed")
-//            return false
-//        } else {
-//            return true
-//        }
-//    }
+    // Calculation cannot be done with negative number at first
+    private var expressionHaveNoOperatorAtFirst: Bool {
+        if operators.count == 0 && numbers.count == 0 && currentNumberTapped == ""  {
+            print("no operator allowed")
+            return false
+        } else {
+            return true
+        }
+    }
     
     
+    /// Add number in numbers tab to calculate
+    /// - Parameter numberTapped: current number tapped before pressing an operator
     func addNumber(numberTapped: String) {
         currentNumberTapped.append(numberTapped)
         print("current number: \(currentNumberTapped)")
-
-    }
-    
-    func addOperator(operatorTapped: String) throws -> Void {
-        guard canAddOperator == true else {
-            throw OperatorError.doubleOperator
-        }
-
-        elements.append(currentNumberTapped)
-        print("elements avant operateur: \(elements)")
-        currentNumberTapped.removeAll()
-        print("current number vidé ?: \(currentNumberTapped)")
-
-        operands.append(operatorTapped)
-        print("operand après operateur: \(operands)")
-
         
     }
     
-    
-    func numbersAreSentToCalculation() {
-        if currentNumberTapped != "" {
-            elements.append(currentNumberTapped)
-            
+    /// Add operator to operators tab to calculate
+    /// - Parameter operatorTapped: operator tapped
+    /// - Returns: error alert if 2 operators in a row or operator add at first
+    func addOperator(operatorTapped: String) throws -> Void {
+        guard expressionHaveNoOperatorAtFirst == true else {
+            throw OperatorError.noOperatorAtFirst
         }
+        guard canAddOperator == true else {
+            throw OperatorError.doubleOperator
+        }
+        if currentNumberTapped != "" {
+            numbers.append(currentNumberTapped)
+            print("elements avant operateur: \(numbers)")
+            currentNumberTapped.removeAll()
+            print("current number vidé ?: \(currentNumberTapped)")
+        }
+        operators.append(operatorTapped)
+        print("operand après operateur: \(operators)")
+    }
+    
+    
+    /// Add last current number tapped to calculation
+    private func numbersAreSentToCalculation() {
+        if currentNumberTapped != "" {
+            numbers.append(currentNumberTapped)
+        }
+    }
+    
+    /// Detect operators and calculate
+    /// - Parameters:
+    ///   - firtNumber: number display at the left of the operator
+    ///   - operand: operator
+    ///   - secondNumber: number display at the right of the operator
+    private func detectOperandAndCalculate(_ firtNumber: Double, _ operand: String, _ secondNumber: Double) {
+        switch operand {
+            case "+": result = firtNumber + secondNumber
+            case "-": result = firtNumber - secondNumber
+            case "x": result = firtNumber * secondNumber
+            case "÷": result = firtNumber / secondNumber
+            default:fatalError("Unknown operator !")
+        }
+        
+    }
+    
+    /// Remove the zeros of the Double for the round results
+    /// - Parameter result: result of calculation
+    /// - Returns: result without 0
+    private func removeZeroFromEnd(of result: Double) -> String {
+        let resultWithoutZero = String(format: "%g", result)
+        return resultWithoutZero
+    }
+    
+    /// Reset calculation
+    func reset() {
+        numbers.removeAll()
+        currentNumberTapped.removeAll()
+        operators.removeAll()
     }
     
     
     
+    /// Calculation using numbers and operators in both tabs
+    /// - Returns: error alert if expression doesn't have enough element or if incorrect
     func calculate() throws -> String {
         numbersAreSentToCalculation()
         
         guard expressionIsCorrect == true else {
             throw CalculationError.operationIsIncorrect
-//            alert(message: "Entrez une expression correcte !", title: "⚠️")
-           
         }
         guard expressionHaveEnoughElement else {
-            
-            throw CalculationError.missingArgument
-//            alert(message: "Il n'y a pas assez d'éléments pour effectuer le calcul !", title: "⚠️")
-          
+            throw CalculationError.missingNumber
         }
-
-        var operationsToReduce = elements
         
+        var operationsToReduce = numbers
         
         print("operation to reduce: \(operationsToReduce)")
         
         while operationsToReduce.count > 1 {
             
             var priorityIndex = 0
-            let multiplyIndex = operands.firstIndex(of: "x")
-            let divideIndex = operands.firstIndex(of: "÷")
+            let multiplyIndex = operators.firstIndex(of: "x")
+            let divideIndex = operators.firstIndex(of: "÷")
             
-            //If there is no multiplication operator, then the priority index is the one of the division operator
+            //If there is no multiplication operator, then the priority index is the one of the division operator and vice versa
             if multiplyIndex == nil {
                 priorityIndex = divideIndex ?? 0
             } else if divideIndex == nil {
@@ -135,7 +171,7 @@ class Calculation {
             
             
             let left = Double(operationsToReduce[priorityIndex])!
-            let operand = operands[priorityIndex]
+            let operand = operators[priorityIndex]
             let right  = Double(operationsToReduce[priorityIndex+1])!
             
             detectOperandAndCalculate(left, operand, right)
@@ -145,45 +181,36 @@ class Calculation {
             print("operation to reduce2: \(operationsToReduce)")
             operationsToReduce.remove(at: priorityIndex)
             print("operation to reduce3: \(operationsToReduce)")
-            operands.remove(at: priorityIndex)
-            print("operand fin de calcul: \(operands)")
+            operators.remove(at: priorityIndex)
+            print("operand fin de calcul: \(operators)")
             // insert the result of the calculation in place of the numbers that have already been calculated
             operationsToReduce.insert(String(result), at: priorityIndex)
             
         }
+        
         // add result to elements to allow a new calculation using the previous result
         reset()
-
-        elements.append(String(result))
-        print("elements result: \(elements)")
+        numbers.append(String(result))
+        print("elements result: \(numbers)")
         
-       
+        
+        // If division by Zero
         if String(result) == "inf" {
             return "Erreur"
         } else {
             //if regular operation
-            return String(result)
-        }
-        
-       
-    }
-    
-    private func detectOperandAndCalculate(_ firtNumber: Double, _ operand: String, _ secondNumber: Double) {
-        switch operand {
-            case "+": result = firtNumber + secondNumber
-            case "-": result = firtNumber - secondNumber
-            case "x": result = firtNumber * secondNumber
-            case "÷": result = firtNumber / secondNumber
-            default:fatalError("Unknown operator !")
+            return removeZeroFromEnd(of: result)
         }
         
     }
     
-    func reset() {
-        elements.removeAll()
-        currentNumberTapped.removeAll()
-        operands.removeAll()
-    }
+    
+    
+    
+    
+    
+    
+    
     
     
 }
