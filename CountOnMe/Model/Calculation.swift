@@ -32,18 +32,20 @@ class Calculation {
     private var expressionIsCorrect: Bool {
         if numbers.count > 0 && operators.count > 0 {
             return true
-        } else {
-            return false
         }
+            return false
+        
     }
+    
+    
     
     // Calculation cannot be done with just one number and one operator
     private var expressionHaveEnoughElement: Bool {
         if numbers.count >= 2 && operators.count >= 1 {
             return true
-        } else {
-            return false
         }
+            return false
+        
     }
     
     // Calculation cannot be done with two operators in a row
@@ -57,11 +59,10 @@ class Calculation {
     // Calculation cannot be done with negative number at first
     private var expressionHaveNoOperatorAtFirst: Bool {
         if operators.count == 0 && numbers.count == 0 && currentNumberTapped == ""  {
-            print("no operator allowed")
             return false
-        } else {
-            return true
         }
+            return true
+        
     }
     
     

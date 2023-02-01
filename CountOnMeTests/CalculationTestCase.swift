@@ -111,7 +111,7 @@ class CalculationTestCase: XCTestCase {
         XCTAssertThrowsError(try calculation.addOperator(operatorTapped: "-")) {
             thrownError = $0
         }
-        XCTAssertEqual(Calculation.OperatorError.doubleOperator, thrownError as! Calculation.OperatorError)
+        XCTAssertEqual(Calculation.OperatorError.noOperatorAtFirst, thrownError as! Calculation.OperatorError)
         
     }
     
