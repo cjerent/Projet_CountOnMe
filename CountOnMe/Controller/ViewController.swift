@@ -14,10 +14,8 @@ class ViewController: UIViewController {
     
     private var calculation = Calculation()
     
-//    private var expressionHaveResult: Bool {
-//        return textView.text.firstIndex(of: "=") != nil
-//    }
-//
+
+   
     //======================
     // MARK: - Actions
     //======================
@@ -28,13 +26,14 @@ class ViewController: UIViewController {
         guard let numberText = sender.title(for: .normal) else {
             return
         }
-//                if expressionHaveResult  {
-//                    textView.text = ""
-//                    calculation.reset()
-//                }
+
+        if calculation.expressionHaveResult == true {
+            textView.text = ""
+            calculation.reset()
+        }
         
-        calculation.addNumber(numberTapped: numberText)
         textView.text.append(numberText)
+        calculation.addNumber(numberTapped: numberText)
         
     }
     

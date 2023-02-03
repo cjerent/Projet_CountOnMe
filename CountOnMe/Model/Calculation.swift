@@ -36,8 +36,15 @@ class Calculation {
             return false
         
     }
-    
-    
+    // Cannot add a number just after the result
+   var expressionHaveResult: Bool {
+        if numbers.count > operators.count{
+            return true
+        }
+            return false
+        
+    }
+
     
     // Calculation cannot be done with just one number and one operator
     private var expressionHaveEnoughElement: Bool {
