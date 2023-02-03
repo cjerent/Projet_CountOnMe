@@ -14,8 +14,6 @@ class ViewController: UIViewController {
     
     private var calculation = Calculation()
     
-
-   
     //======================
     // MARK: - Actions
     //======================
@@ -33,32 +31,32 @@ class ViewController: UIViewController {
         }
         
         textView.text.append(numberText)
-        calculation.addNumber(numberTapped: numberText)
+        calculation.addNumber(numberText)
         
     }
     
     /// Addition button
     /// - Parameter sender: UIButton
     @IBAction func tappedAdditionButton(_ sender: UIButton) {
-        tappedCalculationButton(operand: "+", message: "Un operateur est déja mis !", title: "⛔️")
+        addOperator("+", errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
     }
     
     /// Substraction button
     /// - Parameter sender: UIButton
     @IBAction func tappedSubstractionButton(_ sender: UIButton) {
-        tappedCalculationButton(operand: "-", message: "Un operateur est déja mis !", title: "⛔️")
+        addOperator("-", errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
     }
     
     /// Multiply button
     /// - Parameter sender: UIButton
     @IBAction func tappedMultiplicationButton(_ sender: UIButton) {
-        tappedCalculationButton(operand: "x", message: "Un operateur est déja mis !", title: "⛔️")
+        addOperator("x", errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
     }
     
     /// Division button
     /// - Parameter sender: UIButton
     @IBAction func tappedDivisionButton(_ sender: UIButton) {
-        tappedCalculationButton(operand: "÷", message: "Un operateur est déja mis !", title: "⛔️")
+        addOperator("÷", errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
     }
     
     /// All Clear Button
@@ -86,9 +84,12 @@ class ViewController: UIViewController {
         } catch (let error as Calculation.CalculationError) {
             switch error {
                 case .missingNumber:
-                    alert(message: "Il n'y a pas assez d'éléments pour effectuer le calcul !", title: "⚠️")
+                    errorAlert(errorMessage: "Il n'y a pas assez d'éléments pour effectuer le calcul !", errorTitle: "⚠️")
                 case .operationIsIncorrect:
-                    alert(message: "Veuillez ajouter un opérateur et un autre élément !", title: "⚠️")
+                    errorAlert(errorMessage: "Veuillez ajouter un opérateur et un autre élément !", errorTitle: "⚠️")
+                case .divisionByZero:
+                    errorAlert(errorMessage: "La division par zero n'est pas possible", errorTitle: "⚠️")
+                    textView.text = ""
             }
         } catch {
         }
@@ -98,8 +99,8 @@ class ViewController: UIViewController {
     /// - Parameters:
     ///   - message: message to display
     ///   - title: title of the alert
-    private func alert(message: String, title: String) {
-        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    private func errorAlert(errorMessage: String, errorTitle: String) {
+        let alertVC = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         return self.present(alertVC, animated: true, completion: nil)
     }
@@ -109,16 +110,16 @@ class ViewController: UIViewController {
     ///   - operand: operator to display
     ///   - message: alert error message to display
     ///   - title: title error message to display
-    private func tappedCalculationButton(operand: String, message: String, title: String) {
+    private func addOperator(_ operand: String, errorMessage: String, errorTitle: String) {
         do {
-            try calculation.addOperator(operatorTapped: operand)
+            try calculation.addOperator(operand)
             textView.text.append(operand)
         } catch (let error as Calculation.OperatorError) {
             switch error {
                 case .doubleOperator:
-                    alert(message: message, title: title)
+                    errorAlert(errorMessage: errorMessage, errorTitle: errorTitle)
                 case .noOperatorAtFirst:
-                    alert(message: "Impossible d'ajouter un opérateur avant les chiffres !", title: "⛔️")
+                    errorAlert(errorMessage: "Impossible d'ajouter un opérateur avant les chiffres !", errorTitle: "⛔️")
             }
         } catch {
             
