@@ -48,17 +48,18 @@ class Calculation {
         return false
         
     }
-    /// Cannot add a number just after the result
-    var expressionHaveResult: Bool {
-        if numbers.count > operators.count{
+
+    /// Calculation cannot be done with just one number and one operator
+    private var expressionHaveEnoughElement: Bool {
+        if numbers.count >= 2 && operators.count >= 1 {
             return true
         }
         return false
     }
     
-    /// Calculation cannot be done with just one number and one operator
-    private var expressionHaveEnoughElement: Bool {
-        if numbers.count >= 2 && operators.count >= 1 {
+    /// Cannot add a number just after the result
+    var expressionHaveResult: Bool {
+        if numbers.count > operators.count{
             return true
         }
         return false
@@ -156,15 +157,15 @@ class Calculation {
     
     /// Detect operators and calculate
     /// - Parameters:
-    ///   - firtNumber: number display at the left of the operator
+    ///   - left: number display at the left of the operator
     ///   - operand: operator
-    ///   - secondNumber: number display at the right of the operator
-    private func detectOperandAndCalculate(_ firtNumber: Double, _ operand: String, _ secondNumber: Double) {
+    ///   - right: number display at the right of the operator
+    private func detectOperandAndCalculate(_ left: Double, _ operand: String, _ right: Double) {
         switch operand {
-            case "+": result = firtNumber + secondNumber
-            case "-": result = firtNumber - secondNumber
-            case "x": result = firtNumber * secondNumber
-            case "÷": result = firtNumber / secondNumber
+            case "+": result = left + right
+            case "-": result = left - right
+            case "x": result = left * right
+            case "÷": result = left / right
             default:fatalError("Unknown operator !")
         }
         

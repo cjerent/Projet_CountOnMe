@@ -38,25 +38,25 @@ class ViewController: UIViewController {
     /// Addition button
     /// - Parameter sender: UIButton
     @IBAction func tappedAdditionButton(_ sender: UIButton) {
-        addOperator("+", errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
+        addOperator("+")
     }
     
     /// Substraction button
     /// - Parameter sender: UIButton
     @IBAction func tappedSubstractionButton(_ sender: UIButton) {
-        addOperator("-", errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
+        addOperator("-")
     }
     
     /// Multiply button
     /// - Parameter sender: UIButton
     @IBAction func tappedMultiplicationButton(_ sender: UIButton) {
-        addOperator("x", errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
+        addOperator("x")
     }
     
     /// Division button
     /// - Parameter sender: UIButton
     @IBAction func tappedDivisionButton(_ sender: UIButton) {
-        addOperator("÷", errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
+        addOperator("÷")
     }
     
     /// All Clear Button
@@ -110,21 +110,19 @@ class ViewController: UIViewController {
     ///   - operand: operator to display
     ///   - message: alert error message to display
     ///   - title: title error message to display
-    private func addOperator(_ operand: String, errorMessage: String, errorTitle: String) {
+    private func addOperator(_ operand: String) {
         do {
             try calculation.addOperator(operand)
             textView.text.append(operand)
         } catch (let error as Calculation.OperatorError) {
             switch error {
                 case .doubleOperator:
-                    errorAlert(errorMessage: errorMessage, errorTitle: errorTitle)
+                    errorAlert(errorMessage: "Un operateur est déja mis !", errorTitle: "⛔️")
                 case .noOperatorAtFirst:
                     errorAlert(errorMessage: "Impossible d'ajouter un opérateur avant les chiffres !", errorTitle: "⛔️")
             }
         } catch {
-            
         }
-        
     }
     
     
