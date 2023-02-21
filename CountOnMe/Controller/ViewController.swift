@@ -69,7 +69,12 @@ class ViewController: UIViewController {
     /// Equal Button
     /// - Parameter sender: UIButton
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        displayCalculationResult()
+        if textView.text == "" {
+            textView.text = ""
+        } else {
+            displayCalculationResult()
+        }
+        
     }
     
     //======================

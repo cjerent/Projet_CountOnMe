@@ -99,7 +99,9 @@ class Calculation {
     /// - Returns: Void
     private func checkExpressionRules() throws -> Void {
         guard expressionIsCorrect else {
+            if numbers.count > 0 {
             numbers.removeLast()
+            }
             throw CalculationError.operationIsIncorrect
         }
         guard expressionHaveEnoughElement else {
@@ -231,7 +233,6 @@ class Calculation {
         // add result to elements to allow a new calculation using the previous result
         reset()
         numbers.append(String(result))
-        
         // If division by Zero
         try checkResultRules()
         //if regular operation
